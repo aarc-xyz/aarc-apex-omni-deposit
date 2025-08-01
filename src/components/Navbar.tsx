@@ -20,13 +20,13 @@ export const Navbar = ({ handleDisconnect }: { handleDisconnect: () => void }) =
                         className="w-6 h-6"
                     />
                     <img
-                        className="h-12 w-auto"
-                        src="/apex-name-logo.svg"
-                        alt="Apex Omni Logo"
+                        className="h-6 w-auto"
+                        src="/injective-name-logo.svg"
+                        alt="Injective Logo"
                     />
                 </div>
                 <div className="flex items-center space-x-4">
-                    {address ? <DisconnectButton handleDisconnect={handleDisconnect} /> : <StyledConnectButton />}
+                    {address ? <DisconnectButton handleDisconnect={handleDisconnect} /> : <StyledConnectButton fixWidth={true} />}
                     {/* <img src="/dark_mode.svg" alt="Theme toggle" className="w-10 h-10" /> */}
                 </div>
             </div>
