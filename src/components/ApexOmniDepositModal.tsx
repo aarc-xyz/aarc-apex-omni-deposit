@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 import { ethers } from 'ethers';
-import { AarcFundKitModal } from '@aarc-xyz/fundkit-web-sdk';
+import { AarcFundKitModal } from '@aarc-dev/fundkit-web-sdk';
 import { APEX_OMNI_ADDRESS, SupportedChainId, TOKENS } from '../constants';
 import { Navbar } from './Navbar';
 import StyledConnectButton from './StyledConnectButton';
@@ -33,12 +33,14 @@ export const ApexOmniDepositModal = ({ aarcModal }: { aarcModal: AarcFundKitModa
                 "function depositETH(bytes32 _zkLinkAddress, uint8 _subAccountId) external payable"
             ]);
 
-            let contractPayload;
+            let calldataABI;
+            let calldataParams;
             let value = '0';
 
             if (selectedToken.symbol === 'ETH') {
                 value = ethers.parseUnits(amount, selectedToken.decimals).toString();
-                contractPayload = apexOmniInterface.encodeFunctionData("depositETH", [
+                calldataABI = "depositETH(bytes32,uint8)";
+                calldataParams = apexOmniInterface.encodeFunctionData("depositETH", [
                     `0x000000000000000000000000${address.slice(2)}`,
                     0 // subAccountId
                 ]);
@@ -50,7 +52,8 @@ export const ApexOmniDepositModal = ({ aarcModal }: { aarcModal: AarcFundKitModa
                     throw new Error("Amount too large");
                 }
                 
-                contractPayload = apexOmniInterface.encodeFunctionData("depositERC20", [
+                calldataABI = "depositERC20(address,uint104,bytes32,uint8,bool)";
+                calldataParams = apexOmniInterface.encodeFunctionData("depositERC20", [
                     selectedToken.address,
                     amountInWei,
                     `0x000000000000000000000000${address.slice(2)}`,
@@ -68,7 +71,8 @@ export const ApexOmniDepositModal = ({ aarcModal }: { aarcModal: AarcFundKitModa
                     contractAddress: APEX_OMNI_ADDRESS[SupportedChainId.ARBITRUM],
                     contractName: "Apex Omni Deposit",
                     contractGasLimit: "800000",
-                    contractPayload: contractPayload,
+                    calldataABI: calldataABI,
+                    calldataParams: calldataParams,
                     contractLogoURI: "https://omni.apex.exchange/favicon.ico?v=1.0.2",
                     contractAmount: value
                 });
@@ -77,7 +81,8 @@ export const ApexOmniDepositModal = ({ aarcModal }: { aarcModal: AarcFundKitModa
                     contractAddress: APEX_OMNI_ADDRESS[SupportedChainId.ARBITRUM],
                     contractName: "Apex Omni Deposit",
                     contractGasLimit: "800000",
-                    contractPayload: contractPayload,
+                    calldataABI: calldataABI,
+                    calldataParams: calldataParams,
                     contractLogoURI: "https://omni.apex.exchange/favicon.ico?v=1.0.2"
                 });
             }
